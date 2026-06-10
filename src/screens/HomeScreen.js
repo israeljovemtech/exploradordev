@@ -1,11 +1,3 @@
-/**
- * HomeScreen.js — ExploradorDev
- * -------------------------------------------------------
- * Tela inicial do jogo. Exibe os cards de cada fase.
- * Clique em uma fase para navegar até ela.
- * -------------------------------------------------------
- */
-
 import React from 'react';
 import {
   FlatList,
@@ -17,66 +9,73 @@ import {
   View,
 } from 'react-native';
 
-// ── Dados das fases ────────────────────────────────────────
-const LEVELS = [
+const FASES = [
   {
     id: '1',
-    number: '01',
-    title: 'Fase 1',
-    description: 'Em breve…',
-    route: null, // ainda não implementada
-    icon: '🗺️',
-    locked: true,
+    numero: '01',
+    titulo: 'Fotografo Explorador',
+    descricao: 'Use a camera para capturar evidencias da missao.',
+    rota: 'Fase1',
+    icone: 'CAM',
+    bloqueada: false,
   },
   {
     id: '2',
-    number: '02',
-    title: 'Explorador em Movimento',
-    description: 'Incline o celular e guie o explorador pelo mapa.',
-    route: 'Level2',
-    icon: '🚀',
-    locked: false,
+    numero: '02',
+    titulo: 'Explorador em Movimento',
+    descricao: 'Incline o celular e guie o explorador pelo mapa.',
+    rota: 'Level2',
+    icone: 'MOV',
+    bloqueada: false,
   },
-   {
+  {
+    id: '3',
+    numero: '03',
+    titulo: 'Mensagem Secreta',
+    descricao: 'Agende uma notificacao e toque nela para concluir.',
+    rota: 'Fase3',
+    icone: 'MSG',
+    bloqueada: false,
+  },
+  {
     id: '4',
-    number: '04',
-    title: 'Vibração com Botões',
-    description: 'Pressione cada botão para sentir a vibração personalizada.',
-    route: 'Level4',
-    icon: '📳',
-    locked: false,
+    numero: '04',
+    titulo: 'Codigo de Vibracao',
+    descricao: 'Pressione os botoes para sentir vibracoes diferentes.',
+    rota: 'Level4',
+    icone: 'VIB',
+    bloqueada: false,
   },
-  // Adicione fases futuras aqui
 ];
 
-// ── Componente ─────────────────────────────────────────────
 export default function HomeScreen({ navigation }) {
-  function handleLevelPress(level) {
-    if (level.locked || !level.route) return;
-    navigation.navigate(level.route);
+  function abrirFase(fase) {
+    if (fase.bloqueada || !fase.rota) {
+      return;
+    }
+
+    navigation.navigate(fase.rota);
   }
 
-  function renderLevel({ item }) {
+  function renderizarFase({ item }) {
     return (
       <TouchableOpacity
-        style={[styles.card, item.locked && styles.cardLocked]}
-        onPress={() => handleLevelPress(item)}
-        activeOpacity={item.locked ? 1 : 0.75}
+        style={[styles.card, item.bloqueada && styles.cardBloqueado]}
+        onPress={() => abrirFase(item)}
+        activeOpacity={item.bloqueada ? 1 : 0.75}
       >
-        <View style={styles.cardLeft}>
-          <Text style={styles.cardIcon}>{item.icon}</Text>
-          <View>
-            <Text style={styles.cardNumber}>FASE {item.number}</Text>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.cardDesc}>{item.description}</Text>
+        <View style={styles.cardEsquerda}>
+          <View style={styles.iconeFase}>
+            <Text style={styles.textoIcone}>{item.icone}</Text>
+          </View>
+          <View style={styles.conteudoCard}>
+            <Text style={styles.numeroCard}>FASE {item.numero}</Text>
+            <Text style={styles.tituloCard}>{item.titulo}</Text>
+            <Text style={styles.descricaoCard}>{item.descricao}</Text>
           </View>
         </View>
 
-        {item.locked ? (
-          <Text style={styles.lockIcon}>🔒</Text>
-        ) : (
-          <Text style={styles.arrowIcon}>▶</Text>
-        )}
+        <Text style={styles.setaCard}>{item.bloqueada ? 'X' : '>'}</Text>
       </TouchableOpacity>
     );
   }
@@ -85,33 +84,28 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#050a1e" />
 
-      {/* Cabeçalho */}
       <View style={styles.header}>
         <Text style={styles.appTag}>EXPLORADOR DEV</Text>
         <Text style={styles.appTitle}>Mapa de Fases</Text>
-        <Text style={styles.appSub}>Cada fase explora uma biblioteca do Expo.</Text>
+        <Text style={styles.appSub}>Cada fase explora uma biblioteca do Expo SDK 54.</Text>
       </View>
 
-      {/* Lista de fases */}
       <FlatList
-        data={LEVELS}
+        data={FASES}
         keyExtractor={(item) => item.id}
-        renderItem={renderLevel}
-        contentContainerStyle={styles.list}
+        renderItem={renderizarFase}
+        contentContainerStyle={styles.lista}
         showsVerticalScrollIndicator={false}
       />
     </View>
   );
 }
 
-// ── Estilos ────────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#050a1e',
   },
-
-  // Cabeçalho
   header: {
     paddingTop: Platform.OS === 'android' ? 48 : 60,
     paddingHorizontal: 24,
@@ -132,18 +126,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   appSub: {
-    color: '#475569',
+    color: '#94a3b8',
     fontSize: 13,
     marginTop: 4,
   },
-
-  // Lista
-  list: {
+  lista: {
     padding: 20,
     gap: 14,
   },
-
-  // Card de fase
   card: {
     backgroundColor: '#0f172a',
     borderRadius: 14,
@@ -154,45 +144,56 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#1e293b',
   },
-  cardLocked: {
+  cardBloqueado: {
     opacity: 0.45,
   },
-  cardLeft: {
+  cardEsquerda: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
     flex: 1,
   },
-  cardIcon: {
-    fontSize: 32,
-    marginRight: 4,
+  iconeFase: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#172554',
+    borderWidth: 1,
+    borderColor: '#1d4ed8',
   },
-  cardNumber: {
+  textoIcone: {
+    color: '#bfdbfe',
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  conteudoCard: {
+    flex: 1,
+  },
+  numeroCard: {
     color: '#64748b',
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 1.5,
     marginBottom: 2,
   },
-  cardTitle: {
+  tituloCard: {
     color: '#e2e8f0',
     fontSize: 15,
     fontWeight: '600',
     marginBottom: 3,
   },
-  cardDesc: {
-    color: '#64748b',
+  descricaoCard: {
+    color: '#94a3b8',
     fontSize: 12,
     lineHeight: 17,
-    maxWidth: 220,
+    maxWidth: 230,
   },
-  arrowIcon: {
+  setaCard: {
     color: '#3b82f6',
-    fontSize: 16,
-    marginLeft: 8,
-  },
-  lockIcon: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '900',
     marginLeft: 8,
   },
 });

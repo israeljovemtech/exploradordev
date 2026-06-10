@@ -22,6 +22,15 @@
     },
     "plugins": [
       [
+        "expo-camera",
+        {
+          "cameraPermission": "Precisamos da camera para capturar evidencias da missao."
+        }
+      ],
+      [
+        "expo-notifications"
+      ],
+      [
         "expo-splash-screen",
         {
           "backgroundColor": "#121212",
