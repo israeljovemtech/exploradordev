@@ -37,6 +37,15 @@ const LEVELS = [
     icon: '🚀',
     locked: false,
   },
+   {
+    id: '4',
+    number: '04',
+    title: 'Vibração com Botões',
+    description: 'Pressione cada botão para sentir a vibração personalizada.',
+    route: 'Level4',
+    icon: '📳',
+    locked: false,
+  },
   // Adicione fases futuras aqui
 ];
 

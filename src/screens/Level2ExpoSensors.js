@@ -1,5 +1,5 @@
 /**
- * Level2MotionExplorerScreen.js
+ * Level2ExpoSensors.js
  * -------------------------------------------------------
  * Fase 2 — Explorador em Movimento
  * Biblioteca: expo-sensors (Accelerometer)
@@ -53,7 +53,7 @@ const SENSOR_INTERVAL_MS = 50;
 const SENSITIVITY = 12;
 
 // ─── Componente Principal ─────────────────────────────────
-export default function Level2MotionExplorerScreen({ navigation }) {
+export default function Level2ExpoSensors({ navigation }) {
   const { width: screenWidth } = useWindowDimensions();
   const minX = EDGE_PADDING;
   const maxX = getMaxX(screenWidth);
@@ -65,7 +65,7 @@ export default function Level2MotionExplorerScreen({ navigation }) {
   // Armazena a posição X atual como número (fora do Animated) para os cálculos
   const currentX = useRef(initialX);
 
-  // MantÃ©m os limites atuais disponÃ­veis para o listener do sensor
+  // Mantem os limites atuais disponi­veis para o listener do sensor
   const limitsRef = useRef({ minX, maxX });
 
   // Valor bruto do eixo X exibido na tela (para debug/UX)
@@ -158,8 +158,6 @@ export default function Level2MotionExplorerScreen({ navigation }) {
   // ── Render principal ──────────────────────────────────────
   return (
     <ImageBackground
-      // Fundo temático — troque por um asset local se preferir:
-      // source={require('../../assets/bg_space.png')}
       source={require('../../assets/bg_level2.png')}
       style={styles.background}
       resizeMode="cover"

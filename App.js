@@ -19,8 +19,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // ── Telas ──────────────────────────────────────────────────
 import HomeScreen from './src/screens/HomeScreen';
 import Level2ExpoSensors from './src/screens/Level2ExpoSensors';
+import Level4Haptics from './src/screens/Level4Haptics';
 
-// adicione futuras fases aqui:
+// Adicione futuras fases aqui:
 // import Level3Screen from './src/screens/Level3Screen';
 
 const Stack = createNativeStackNavigator();
@@ -44,6 +45,13 @@ export default function App() {
         <Stack.Screen
           name="Level2"
           component={Level2ExpoSensors}
+          options={{ gestureEnabled: true }}
+        />
+
+        {/* Fase 4 — Código de Vibração */}
+        <Stack.Screen
+          name="Level4"
+          component={Level4Haptics}
           options={{ gestureEnabled: true }}
         />
 
