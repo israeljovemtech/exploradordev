@@ -16,7 +16,7 @@ const FASES = [
     titulo: 'Fotografo Explorador',
     descricao: 'Use a camera para capturar evidencias da missao.',
     rota: 'Fase1',
-    icone: 'CAM',
+    icone: '📸',
     bloqueada: false,
   },
   {
@@ -25,7 +25,7 @@ const FASES = [
     titulo: 'Explorador em Movimento',
     descricao: 'Incline o celular e guie o explorador pelo mapa.',
     rota: 'Level2',
-    icone: 'MOV',
+    icone: '🧭',
     bloqueada: false,
   },
   {
@@ -34,7 +34,7 @@ const FASES = [
     titulo: 'Mensagem Secreta',
     descricao: 'Agende uma notificacao e toque nela para concluir.',
     rota: 'Fase3',
-    icone: 'MSG',
+    icone: '📧',
     bloqueada: false,
   },
   {
@@ -43,7 +43,7 @@ const FASES = [
     titulo: 'Codigo de Vibracao',
     descricao: 'Pressione os botoes para sentir vibracoes diferentes.',
     rota: 'Level4',
-    icone: 'VIB',
+    icone: '📳',
     bloqueada: false,
   },
 ];
