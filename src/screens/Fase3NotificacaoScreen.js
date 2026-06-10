@@ -118,20 +118,12 @@ export default function Fase3NotificacaoScreen({ navigation }) {
       setErro('');
       setMissaoConcluida(false);
 
-      // Se nao tiver permissao, nao agenda, mas tambem nao quebra o app.
-      const permissaoLiberada = await solicitarPermissaoSeNecessario();
-
-      if (!permissaoLiberada) {
-        setStatusMissao('Permissao negada. A fase nao trava, mas a mensagem nao pode aparecer.');
-        return;
-      }
-
       // Aqui a API agenda uma notificacao local para alguns segundos depois.
       const identificador = await Notifications.scheduleNotificationAsync({
         content: {
           title: 'Mensagem secreta encontrada',
-          body: 'Toque aqui para receber a recompensa da missao.',
-          sound: true,
+          body: 'Toque aqui para receber a recompensa da missão.',
+          sound: 'notificacao.caf',
           // Dados escondidos que eu uso depois para identificar essa notificacao.
           data: {
             fase: 'mensagem-secreta',
@@ -177,7 +169,7 @@ export default function Fase3NotificacaoScreen({ navigation }) {
         <Text style={styles.indicadorFase}>FASE 3</Text>
         <Text style={styles.titulo}>Mensagem Secreta</Text>
         <Text style={styles.subtitulo}>
-          Agende uma notificacao local e toque nela para concluir a missao.
+          Agende uma notificação local e toque nela para concluir a missao.
         </Text>
       </View>
 

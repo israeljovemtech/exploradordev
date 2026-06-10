@@ -28,7 +28,12 @@
         }
       ],
       [
-        "expo-notifications"
+        "expo-notifications",
+        {
+          "sounds": [
+            "./assets/notificacao.caf"
+          ]
+        }
       ],
       [
         "expo-splash-screen",
