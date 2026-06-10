@@ -1,20 +1,20 @@
-# Bug Bounty - Level 4
+﻿# Bug Bounty - Level 4
 
-## Visao geral do teste
+## Visão geral do teste
 
-Este relatorio avalia a Fase 4 do app, implementada em `src/screens/Level4Haptics.js` com `expo-haptics`.
+Este relatório avalia a Fase 4 do app, implementada em `src/screens/Level4Haptics.js` com `expo-haptics`.
 
-A validacao foi feita por inspecao de codigo e pela documentacao oficial versionada do Expo SDK 54. Nao foi realizado teste fisico em aparelhos Android/iOS nem em dispositivo sem motor haptico.
+A validação foi feita por inspeção de código e pela documentação oficial versionada do Expo SDK 54. Não foi realizado teste físico em aparelhos Android/iOS nem em dispositivo sem motor háptico.
 
 Fonte consultada:
 
 https://docs.expo.dev/versions/v54.0.0/sdk/haptics/
 
-## Cenario 1: pressionar o botao muito rapidamente
+## Cenário 1: pressionar o botão muito rapidamente
 
 ### O que acontece
 
-O codigo atual permite toques rapidos em sequencia enquanto `gameState` nao for `success`.
+O código atual permite toques rápidos em sequência enquanto `gameState` não for `success`.
 
 Cada toque chama `handlePress(button)`, que executa:
 
@@ -22,32 +22,32 @@ Cada toque chama `handlePress(button)`, que executa:
 await button.action();
 ```
 
-As vibracoes podem parecer sobrepostas, truncadas, enfileiradas ou ignoradas, dependendo do sistema operacional e do hardware. Alem disso, como nao ha estado de bloqueio durante uma vibracao, varios `handlePress` podem rodar muito proximos um do outro.
+As vibrações podem parecer sobrepostas, truncadas, enfileiradas ou ignoradas, dependendo do sistema operacional e do hardware. Além disso, como não há estado de bloqueio durante uma vibração, vários `handlePress` podem rodar muito próximos um do outro.
 
-Tambem existe risco de inconsistencia na sequencia do jogador. Em toques muito rapidos, mais de uma chamada pode usar o mesmo valor antigo de `playerSequence`, porque `setPlayerSequence` e assincrono.
+Também existe risco de inconsistência na sequência do jogador. Em toques muito rápidos, mais de uma chamada pode usar o mesmo valor antigo de `playerSequence`, porque `setPlayerSequence` é assíncrono.
 
-### Causa provavel
+### Causa provável
 
-Nao existe debounce, throttle ou flag de processamento como `isHapticsBusy`.
+Não existe debounce, throttle ou flag de processamento como `isHapticsBusy`.
 
-O botao so fica desabilitado quando `gameState === 'success'`. Em estado `playing` ou `error`, novos toques continuam sendo aceitos.
+O botão só fica desabilitado quando `gameState === 'success'`. Em estado `playing` ou `error`, novos toques continuam sendo aceitos.
 
-### Motivo tecnico
+### Motivo técnico
 
-Segundo a documentacao do Expo SDK 54, as funcoes de haptics retornam uma `Promise<void>` que resolve quando a funcionalidade nativa e acionada. Isso nao garante que o efeito fisico terminou antes do proximo toque.
+Segundo a documentação do Expo SDK 54, as funções de haptics retornam uma `Promise<void>` que resolve quando a funcionalidade nativa é acionada. Isso não garante que o efeito físico terminou antes do próximo toque.
 
-Na camada React, multiplos eventos de toque podem disparar antes da UI renderizar o novo estado. Por isso, usar `const newSequence = [...playerSequence, button.id]` pode perder entradas quando os toques sao muito rapidos.
+Na camada React, múltiplos eventos de toque podem disparar antes da UI renderizar o novo estado. Por isso, usar `const newSequence = [...playerSequence, button.id]` pode perder entradas quando os toques são muito rápidos.
 
 ### Como resolver
 
-Adicionar controle de entrada durante a vibracao:
+Adicionar controle de entrada durante a vibração:
 
 - criar um estado ou `useRef` chamado `isHapticsBusy`;
-- ignorar novos toques enquanto uma vibracao estiver sendo processada;
-- liberar o botao apos um pequeno intervalo, como `150ms` a `300ms`;
+- ignorar novos toques enquanto uma vibração estiver sendo processada;
+- liberar o botão após um pequeno intervalo, como `150ms` a `300ms`;
 - atualizar `playerSequence` com forma funcional para evitar estado antigo.
 
-Exemplo de estrategia:
+Exemplo de estratégia:
 
 ```js
 const isHapticsBusy = useRef(false);
@@ -72,42 +72,40 @@ async function handlePress(button) {
 }
 ```
 
-## Cenario 2: dispositivo sem motor haptico
+## Cenário 2: dispositivo sem motor háptico
 
 ### O que acontece
 
-Em um dispositivo sem motor haptico, o comportamento esperado e que o app nao crashe, mas a vibracao pode simplesmente nao acontecer.
+Em um dispositivo sem motor háptico, o comportamento esperado é que o app não crashe, mas a vibração pode simplesmente não acontecer.
 
-No iOS, a documentacao informa que o Taptic Engine pode nao fazer nada em algumas condicoes, como:
+No iOS, a documentação informa que o Taptic Engine pode não fazer nada em algumas condições, como:
 
 - modo de pouca energia ativado;
 - Taptic Engine desativado nos ajustes;
-- camera do iOS ativa;
+- câmera do iOS ativa;
 - ditado do iOS ativo.
 
-Na web, a vibracao depende de suporte do navegador, hardware de vibracao e permissao/contexto do usuario.
+No Android, `expo-haptics` usa serviços de vibração do sistema. A permissão `VIBRATE` é adicionada automaticamente.
 
-No Android, `expo-haptics` usa servicos de vibracao do sistema. A permissao `VIBRATE` e adicionada automaticamente.
+### Causa provável
 
-### Causa provavel
+`expo-haptics` abstrai a chamada nativa, mas não garante que todo dispositivo terá hardware háptico real ou que o sistema operacional executará o feedback.
 
-`expo-haptics` abstrai a chamada nativa, mas nao garante que todo dispositivo tera hardware haptico real ou que o sistema operacional executara o feedback.
+### Motivo técnico
 
-### Motivo tecnico
+As APIs `impactAsync`, `notificationAsync` e `selectionAsync` retornam `Promise<void>` quando a chamada nativa é acionada. Isso não significa que o usuário necessariamente sentiu uma vibração.
 
-As APIs `impactAsync`, `notificationAsync` e `selectionAsync` retornam `Promise<void>` quando a chamada nativa e acionada. Isso nao significa que o usuario necessariamente sentiu uma vibracao.
-
-O codigo atual tambem nao usa `try/catch` ao chamar `button.action()`. Se uma chamada nativa falhar ou rejeitar por alguma condicao inesperada, pode ocorrer erro nao tratado.
+O código atual também não usa `try/catch` ao chamar `button.action()`. Se uma chamada nativa falhar ou rejeitar por alguma condição inesperada, pode ocorrer erro não tratado.
 
 ### Como resolver
 
-Tratar falhas silenciosas como parte normal da experiencia:
+Tratar falhas silenciosas como parte normal da experiência:
 
-- envolver chamadas hapticas em `try/catch`;
-- manter feedback visual independente da vibracao;
-- mostrar progresso visual mesmo quando o hardware nao vibrar;
-- evitar depender exclusivamente da sensacao haptica para completar a fase;
-- considerar uma mensagem discreta se a vibracao nao puder ser executada.
+- envolver chamadas hápticas em `try/catch`;
+- manter feedback visual independente da vibração;
+- mostrar progresso visual mesmo quando o hardware não vibrar;
+- evitar depender exclusivamente da sensação háptica para completar a fase;
+- considerar uma mensagem discreta se a vibração não puder ser executada.
 
 Exemplo:
 
@@ -124,43 +122,43 @@ async function safeHaptic(action) {
 
 Depois, `handlePress` pode continuar atualizando a UI mesmo se `safeHaptic` retornar `false`.
 
-## Cenario 3: comparar impactAsync Heavy no Android vs iOS
+## Cenário 3: comparar impactAsync Heavy no Android vs iOS
 
 ### O que acontece
 
-`Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)` nao deve ser sentido exatamente igual no Android e no iOS.
+`Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)` não deve ser sentido exatamente igual no Android e no iOS.
 
-No iOS, o `Heavy` e mapeado diretamente para o `UIImpactFeedbackStyle.Heavy`, usando o Taptic Engine quando disponivel.
+No iOS, o `Heavy` é mapeado diretamente para o `UIImpactFeedbackStyle.Heavy`, usando o Taptic Engine quando disponível.
 
-No Android, a documentacao informa que `impactAsync` e simulado usando a API de vibracao do Android. Portanto, a intensidade e a textura podem variar bastante entre fabricantes, modelos, versoes do sistema e qualidade do motor de vibracao.
+No Android, a documentação informa que `impactAsync` é simulado usando a API de vibração do Android. Portanto, a intensidade e a textura podem variar bastante entre fabricantes, modelos, versões do sistema e qualidade do motor de vibração.
 
-### Causa provavel
+### Causa provável
 
 As plataformas usam mecanismos nativos diferentes.
 
-### Motivo tecnico
+### Motivo técnico
 
-No iOS, ha um motor haptico e estilos de feedback padronizados pelo sistema. No Android, o efeito equivalente pode ser apenas uma simulacao via `Vibrator`, com comportamento dependente do aparelho.
+No iOS, há um motor háptico e estilos de feedback padronizados pelo sistema. No Android, o efeito equivalente pode ser apenas uma simulação via `Vibrator`, com comportamento dependente do aparelho.
 
 Por isso, `Heavy` no Android pode parecer:
 
 - mais longo;
 - mais fraco;
 - menos preciso;
-- mais "vibracao comum" do que feedback haptico;
+- mais "vibração comum" do que feedback háptico;
 - diferente entre dois aparelhos Android.
 
-No iOS, tende a parecer mais curto, seco e consistente quando o Taptic Engine esta ativo.
+No iOS, tende a parecer mais curto, seco e consistente quando o Taptic Engine está ativo.
 
 ### Como resolver
 
-Nao usar `Heavy` como criterio absoluto de intensidade entre plataformas.
+Não usar `Heavy` como critério absoluto de intensidade entre plataformas.
 
-Recomendacoes:
+Recomendações:
 
 - testar em pelo menos um Android real e um iPhone real;
-- ajustar texto da UI para nao prometer a mesma sensacao em todos os aparelhos;
-- para Android, considerar `Haptics.performAndroidHapticsAsync()` quando quiser feedback mais parecido com padroes hapticos do sistema;
+- ajustar texto da UI para não prometer a mesma sensação em todos os aparelhos;
+- para Android, considerar `Haptics.performAndroidHapticsAsync()` quando quiser feedback mais parecido com padrões hápticos do sistema;
 - manter fallback visual para cada toque.
 
 Exemplo de abordagem por plataforma:
@@ -175,19 +173,21 @@ async function playHeavyFeedback() {
 }
 ```
 
-## Recomendacoes gerais de correcao
+## Recomendações gerais de correção
 
 1. Adicionar debounce/throttle para impedir spam de toques.
-2. Usar `useRef` para bloquear chamadas hapticas concorrentes.
-3. Atualizar `playerSequence` com callback funcional para evitar estado antigo em toques rapidos.
-4. Envolver chamadas hapticas em `try/catch`.
-5. Garantir feedback visual para todos os botoes, mesmo sem vibracao.
-6. Tratar Android e iOS como experiencias hapticas equivalentes em intencao, mas nao identicas em intensidade.
+2. Usar `useRef` para bloquear chamadas hápticas concorrentes.
+3. Atualizar `playerSequence` com callback funcional para evitar estado antigo em toques rápidos.
+4. Envolver chamadas hápticas em `try/catch`.
+5. Garantir feedback visual para todos os botões, mesmo sem vibração.
+6. Tratar Android e iOS como experiências hápticas equivalentes em intenção, mas não idênticas em intensidade.
 7. Testar em hardware real, especialmente para comparar `ImpactFeedbackStyle.Heavy`.
 
-## Resultado esperado apos correcoes
+## Resultado esperado após correções
 
-- Toques muito rapidos nao devem quebrar a sequencia.
-- Vibracoes nao devem acumular chamadas concorrentes sem controle.
-- Dispositivos sem motor haptico devem continuar navegaveis e jogaveis.
-- Android e iOS devem oferecer feedback coerente, mesmo que a sensacao fisica seja diferente.
+- Toques muito rápidos não devem quebrar a sequência.
+- Vibrações não devem acumular chamadas concorrentes sem controle.
+- Dispositivos sem motor háptico devem continuar navegáveis e jogáveis.
+- Android e iOS devem oferecer feedback coerente, mesmo que a sensação física seja diferente.
+
+

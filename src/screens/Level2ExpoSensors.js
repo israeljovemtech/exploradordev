@@ -101,11 +101,18 @@ export default function Level2ExpoSensors({ navigation }) {
       subscription = Accelerometer.addListener(({ x }) => {
         // Atualiza o indicador visual do eixo X
         setAxisX(parseFloat(x.toFixed(3)));
+        
 
+        // BUG-TESTING::::::::::::::::::::::::::::::
         // Calcula o deslocamento baseado na inclinação
         // No iOS/Android, inclinar para a direita = x negativo
         // Invertemos o sinal para que a direita → movimento para direita
-        const delta = x * SENSITIVITY;
+        // Solucao opcional para ativar caso o Android esteja invertido:
+        // substitua a linha ativa do delta pelas duas linhas abaixo.
+
+        // const directionMultiplier = Platform.OS === 'android' ? -1 : 1;
+       //  const delta = x * directionMultiplier * SENSITIVITY;
+       const delta = x * SENSITIVITY;
         const { minX: currentMinX, maxX: currentMaxX } = limitsRef.current;
 
         // Nova posição X, limitada entre MIN_X e MAX_X
