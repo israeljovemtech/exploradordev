@@ -14,7 +14,7 @@ export default function Fase1CameraScreen({ navigation }) {
   // useRef guarda a caamera para eu conseguir chamar funções dela depois
   const referenciaCamera = useRef(null);
 
-  // Hook do expo-camera que ve se tem permissao
+  // Hook do expo-camera que ve se tem permissão
   const [permissao, solicitarPermissao] = useCameraPermissions();
 
   // Esses estados controlam o que aparece na tela
@@ -25,13 +25,13 @@ export default function Fase1CameraScreen({ navigation }) {
 
   // Essa função roda quando clico no botao de tirar foto
   async function tirarFoto() {
-    // Aqui eu evito erro se a camera ainda nao carregou ou se o botao foi apertado varias vezes
+    // Aqui eu evito erro se a camera ainda nao carregou ou se o botão foi apertado várias vezes
     if (!referenciaCamera.current || !cameraPronta || capturando) {
       return;
     }
 
     try {
-      // Trava o botao enquanto esta tirando a foto
+      // Trava o botão enquanto esta tirando a foto
       setCapturando(true);
       setMensagemErro('');
 
@@ -47,7 +47,7 @@ export default function Fase1CameraScreen({ navigation }) {
       // Se der erro, mostro uma mensagem simples em vez de deixar quebrar
       setMensagemErro('Nao foi possivel capturar a evidencia. Tente novamente.');
     } finally {
-      // Libera o botao de novo no final
+      // Libera o botão de novo no final
       setCapturando(false);
     }
   }
@@ -76,18 +76,18 @@ export default function Fase1CameraScreen({ navigation }) {
         <Text style={styles.indicadorFase}>FASE 1</Text>
         <Text style={styles.titulo}>Fotografo Explorador</Text>
         <Text style={styles.textoAjuda}>
-          A missao precisa da camera para capturar uma evidencia do ambiente.
+          A missão precisa da câmera para capturar uma evidência do ambiente.
         </Text>
 
-        {/* Se ainda pode pedir permissao, mostro o botao que abre o popup do sistema. */}
+        {/* Se ainda pode pedir permissão, mostro o botão que abre o popup do sistema. */}
         {permissao.canAskAgain ? (
           <TouchableOpacity style={styles.botaoPrincipal} onPress={solicitarPermissao}>
             <Text style={styles.textoBotaoPrincipal}>Permitir camera</Text>
           </TouchableOpacity>
         ) : (
-          // Se a permissao foi bloqueada de vez, so avisa para liberar nas configurações
+          // Se a permissão foi bloqueada de vez, só avisa para liberar nas configurações
           <Text style={styles.textoErro}>
-            Permissao negada permanentemente. Ative a camera nas configuracoes do sistema.
+            Permissão negada permanentemente. Ative a câmera nas configurações do sistema.
           </Text>
         )}
 
@@ -150,7 +150,7 @@ export default function Fase1CameraScreen({ navigation }) {
         <Text style={styles.textoAjuda}>Aponte a camera e capture uma evidencia.</Text>
       </View>
 
-      {/* Isso e so uma mira visual para parecer missao de explorador. */}
+      {/* aqui é s[ó uma mira visual para parecer missão de jgoo mesmo */}
       <View style={styles.mira} />
 
       <View style={styles.painelCamera}>

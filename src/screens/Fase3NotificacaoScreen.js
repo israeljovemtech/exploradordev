@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import * as Notifications from 'expo-notifications';
 
-// Esse handler faz a notificacao aparecer mesmo se o app estiver aberto.
+// Esse handler faz a notificação aparecer mesmo se o app estiver aberto
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowBanner: true,
@@ -22,11 +22,11 @@ Notifications.setNotificationHandler({
 // Nome do canal usado no Android para essa fase.
 const CANAL_MISSAO = 'mensagem-secreta';
 
-// Tempo que demora para a notificacao chegar depois de apertar o botao.
+// Tempo que demora para a notificação chegar depois de apertar o botão
 const SEGUNDOS_ATE_NOTIFICACAO = 5;
 
 export default function Fase3NotificacaoScreen({ navigation }) {
-  // Estados usados para mostrar o andamento da permissao e da missao na tela.
+  // Estados usados para mostrar o andamento da permissão e da missão 
   const [statusPermissao, setStatusPermissao] = useState('verificando');
   const [statusMissao, setStatusMissao] = useState('Aguardando preparo da mensagem.');
   const [idNotificacao, setIdNotificacao] = useState(null);
@@ -34,13 +34,13 @@ export default function Fase3NotificacaoScreen({ navigation }) {
   const [agendando, setAgendando] = useState(false);
   const [erro, setErro] = useState('');
 
-  // useEffect roda quando entro na tela. Aqui preparo notificacoes e escuto o toque nela.
+  // useEffect roda quando entro na tela. Aqui preparo notificaçõess e escuto o toque nela
   useEffect(() => {
     let assinaturaResposta;
 
     async function prepararFase() {
       try {
-        // Android precisa de canal de notificacao, por isso faço isso primeiro.
+        // Android precisa de canal de notificação, por isso faço isso primeiro.
         await configurarCanalAndroid();
 
         // Verifico se ja tenho permissao, mas sem abrir popup ainda.
