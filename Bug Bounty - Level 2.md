@@ -76,13 +76,6 @@ Se for necessário usar intervalo menor que `200ms` no Android 12 ou superior, a
 }
 ```
 
-Também é recomendado:
-
-- reduzir atualizações visuais desnecessarias;
-- evitar atualizar texto de debug em toda leitura;
-- aplicar uma zona morta para ignorar microvariações;
-- suavizar o movimento com filtro ou interpolação.
-
 ## Cenário 3: dispositivo sem acelerômetro
 
 ### O que acontece
@@ -129,13 +122,5 @@ async function startSensor() {
 
 Para web, considerar também o fluxo de permissões com `requestPermissionsAsync()` quando aplicável.
 
-## Recomendações de correção
-
-1. Corrigir a rota da Fase 2 em `App.js` para usar `Level2ExpoSensors`.
-2. Adicionar controle de `AppState` ou foco da tela para pausar e retomar o listener do acelerômetro.
-3. Manter `SENSOR_INTERVAL_MS` em um valor seguro, como `50ms` ou `100ms`.
-4. Adicionar `try/catch` ao fluxo de inicialização do sensor.
-5. Se a leitura em alta frequência for realmente necessária no Android 12+, adicionar `android.permission.HIGH_SAMPLING_RATE_SENSORS`.
-6. Testar em aparelho físico Android é, se possível, em ambiente sem acelerômetro para confirmar o comportamento da tela de fallback.
 
 

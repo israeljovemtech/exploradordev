@@ -173,21 +173,4 @@ async function playHeavyFeedback() {
 }
 ```
 
-## Recomendações gerais de correção
-
-1. Adicionar debounce/throttle para impedir spam de toques.
-2. Usar `useRef` para bloquear chamadas hápticas concorrentes.
-3. Atualizar `playerSequence` com callback funcional para evitar estado antigo em toques rápidos.
-4. Envolver chamadas hápticas em `try/catch`.
-5. Garantir feedback visual para todos os botões, mesmo sem vibração.
-6. Tratar Android e iOS como experiências hápticas equivalentes em intenção, mas não idênticas em intensidade.
-7. Testar em hardware real, especialmente para comparar `ImpactFeedbackStyle.Heavy`.
-
-## Resultado esperado após correções
-
-- Toques muito rápidos não devem quebrar a sequência.
-- Vibrações não devem acumular chamadas concorrentes sem controle.
-- Dispositivos sem motor háptico devem continuar navegáveis e jogáveis.
-- Android e iOS devem oferecer feedback coerente, mesmo que a sensação física seja diferente.
-
 

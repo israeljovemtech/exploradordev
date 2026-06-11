@@ -161,25 +161,7 @@ Vantagens:
 - deixa a decisão explícita no código;
 - reduz risco de regressão em outras partes da tela.
 
-## Alternativas
-
-### Funcao auxiliar
-
-```js
-function getHorizontalTiltDelta(x) {
-  const directionMultiplier = Platform.OS === 'android' ? -1 : 1;
-  return x * directionMultiplier * SENSITIVITY;
-}
-```
-
-Uso:
-
-```js
-const delta = getHorizontalTiltDelta(x);
-```
-
-Essa alternativa facilita testes e evita espalhar regra de plataforma dentro do listener.
-
+lista testes e evita espalhar regra de plataforma dentro do listener.
 
 ## Plano de teste
 
@@ -201,9 +183,9 @@ Essa alternativa facilita testes e evita espalhar regra de plataforma dentro do 
 5. Confirmar que o personagem vai para a esquerda.
 6. Confirmar que o Android deixou de ficar invertido.
 
-### Validações que podem ser realizadas
+### Validações realizadas
 
-- Confirmar que os limites latérais continuam funcionando.
+- Confirmar que os limites laterais continuam funcionando.
 - Confirmar que `axisX` continua mostrando o valor bruto do sensor.
 - Confirmar que apenas o cálculo do movimento foi normalizado.
 - Testar com o aparelho em posição neutra para verificar se não há movimento excessivo.
